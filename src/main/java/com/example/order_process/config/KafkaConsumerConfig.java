@@ -19,7 +19,7 @@ public class KafkaConsumerConfig {
     @Bean
     public ConsumerFactory<String, Order> consumerFactory() {
         JsonDeserializer<Order> deserializer = new JsonDeserializer<>(Order.class);
-        deserializer.addTrustedPackages("*"); // ✅ Sửa lỗi TRUSTED_PACKAGES
+        deserializer.addTrustedPackages("*");
 
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
