@@ -40,27 +40,20 @@ public class OrderService {
         return convertToResponse(order);
     }
 
-    public Optional<OrderResponse> getOrderById(String id) {
+    public OrderResponse getOrderById(String id) {
         String cacheKey = "order_" + id;
         Object cachedOrder = redisTemplate.opsForValue().get(cacheKey);
 
         Order order;
         if (cachedOrder != null) {
-            if (cachedOrder instanceof Order) {
-                order = (Order) cachedOrder;
-            } else {
-                order = objectMapper.convertValue(cachedOrder, Order.class);
-            }
+            order = objectMapper.convertValue(cachedOrder, Order.class);
         } else {
-            Optional<Order> orderOptional = orderRepository.findById(id);
-            if (orderOptional.isEmpty()) {
-                return Optional.empty();
-            }
-            order = orderOptional.get();
+            order = orderRepository.findById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
             redisTemplate.opsForValue().set(cacheKey, order, Duration.ofMinutes(10));
         }
 
-        return Optional.of(convertToResponse(order));
+        return convertToResponse(order);
     }
 
     public Page<OrderResponse> getAllOrders(int page, int size) {
@@ -73,6 +66,24 @@ public class OrderService {
         redisTemplate.delete("order_" + id);
     }
 
+    public OrderResponse updateOrder(String id, OrderRequest orderRequest) {
+        Optional<Order> orderOptional = orderRepository.findById(id);
+        if (orderOptional.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found");
+        }
+
+        Order order = orderOptional.get();
+        order.setUserId(orderRequest.getUserId());
+        order.setItems(orderRequest.getItems());
+        order.setTotalPrice(orderRequest.getTotalPrice());
+
+        orderRepository.save(order);
+
+        String cacheKey = "order_" + order.getId();
+        redisTemplate.opsForValue().set(cacheKey, order, Duration.ofMinutes(10));
+
+        return convertToResponse(order);
+    }
     private OrderResponse convertToResponse(Order order) {
         OrderResponse response = new OrderResponse();
         response.setId(order.getId());

@@ -23,12 +23,8 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderResponse> getOrderById(@PathVariable String id) {
-        Optional<OrderResponse> orderResponseOptional = orderService.getOrderById(id);
-        return orderResponseOptional
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(orderService.getOrderById(id));
     }
-
 
     @GetMapping
     public ResponseEntity<Page<OrderResponse>> getAllOrders(
@@ -41,5 +37,10 @@ public class OrderController {
     public ResponseEntity<String> deleteOrder(@PathVariable String id) {
         orderService.deleteOrder(id);
         return ResponseEntity.ok("Order deleted successfully");
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrderResponse> updateOrder(@PathVariable String id, @RequestBody OrderRequest orderRequest) {
+        return ResponseEntity.ok(orderService.updateOrder(id, orderRequest));
     }
 }
