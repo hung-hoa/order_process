@@ -8,7 +8,8 @@ A simple **Order Processing System** built with **Spring Boot**, using **MongoDB
 👉 **MongoDB** for order storage  
 👉 **Redis** for caching  
 👉 **Kafka** for event-driven processing  
-👉 **Docker Compose** for containerized deployment
+👉 **Docker Compose** for containerized deployment  
+👉 **Facebook OAuth2 Authentication** for user login
 
 ## 🏢 **Technologies Used**
 - **Spring Boot**
@@ -17,13 +18,14 @@ A simple **Order Processing System** built with **Spring Boot**, using **MongoDB
 - **Redis** (Caching layer)
 - **Kafka** (Message broker for event-driven architecture)
 - **Docker & Docker Compose** (Containerization)
+- **OAuth2** (Facebook Authentication)
 
 ## 🚀 **Getting Started**
 
 ### 1⃣ **Clone the Repository**
 ```sh
 git clone ...
-cd order-process  
+cd order-process
 ```
 
 ### 2⃣ **Run the Project with Docker**
@@ -37,12 +39,15 @@ docker compose -f docker/docker-compose-backend.yml up --build -d
 #### 🔑 **Authentication**
 - **Register** → `POST /api/auth/register`
 - **Login** → `POST /api/auth/login`
+- **Login with Facebook** → To login using Facebook, navigate to:
+  `http://localhost:8080/oauth2/authorization/facebook`
 
 #### 📦 **Order Management**
 - **Create Order** → `POST /api/order`
 - **Get Order by ID** → `GET /api/order/{id}`
 - **Get All Orders** → `GET /api/order?page=0&size=10`
 - **Delete Order** → `DELETE /api/order/{id}`
+- **Update Order** → `PUT /api/order/{id}`
 
 ### 4⃣ **Stop the Application**
 To stop all services, run:

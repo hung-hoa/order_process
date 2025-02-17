@@ -1,13 +1,11 @@
 package com.example.order_process.controller;
 
-import com.example.order_process.dto.user.AuthRequest;
 import com.example.order_process.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -17,15 +15,25 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody AuthRequest request) {
-        return ResponseEntity.ok(authService.register(request.getUsername(), request.getPassword()));
+    public String register(@RequestParam String username,
+                           @RequestParam String password,
+                           @RequestParam(required = false) String email,
+                           @RequestParam boolean isOAuthLogin) {
+        return authService.register(username, password, email, isOAuthLogin);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody AuthRequest request) {
-        return ResponseEntity.ok(authService.login(request.getUsername(), request.getPassword()));
+    public String login(@RequestParam String username,
+                        @RequestParam(required = false) String password,
+                        @RequestParam boolean isOAuthLogin) {
+        if (!isOAuthLogin && password == null) {
+            throw new IllegalArgumentException("Password is required for regular login");
+        }
+
+        return authService.login(username, isOAuthLogin);
+    }
+    @GetMapping("/oauth-success")
+    public ResponseEntity<String> oauthSuccess(@RequestParam String token) {
+        return ResponseEntity.ok().body(token);
     }
 }
-
-
-

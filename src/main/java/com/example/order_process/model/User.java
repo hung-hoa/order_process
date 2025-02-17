@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Document(collection = "users")
-@CompoundIndex(def = "{'username': 1}", unique = true) // Đảm bảo username là duy nhất
+@CompoundIndex(def = "{'username': 1}", unique = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +24,9 @@ public class User implements UserDetails {
 
     private String username;
     private String password;
+    private String facebookId;
+    private String email;
+    private String fullName;
     private Role role;
 
     @Override
